@@ -101,11 +101,14 @@ export default function Game() {
     setTarget(newTarget);
     setTargetLabelHex(randomDifferent(newTarget));
     setGrid(generateGrid(newTarget));
+    // calcula novo limite de tempo (se necessário) e aplica imediatamente
+    let newLimit = timeLimit;
     if (increaseDifficulty) {
-      setTimeLimit((t) => Math.max(700, Math.round(t * 0.93)));
+      newLimit = Math.max(700, Math.round(timeLimit * 0.93));
+      setTimeLimit(newLimit);
     }
-    setTimeLeft((prev) => Math.max(0, Math.min(timeLimit, timeLimit)));
-    // restart timer (timeLimit changed via state effect handles it)
+    setTimeLeft(newLimit);
+
     startTimer();
   }
 
@@ -114,7 +117,7 @@ export default function Game() {
     if (color === target) {
       const newScore = score + 1;
       setScore(newScore);
-      // every 3 corrects, make it faster
+
       const makeHarder = newScore % 3 === 0;
       nextRound(makeHarder);
     } else {
@@ -142,7 +145,7 @@ export default function Game() {
   function restart() {
     setScore(0);
     setLives(3);
-    setTimeLimit(3000);
+    setTimeLimit(2000);
     setGameOver(false);
     const t = randomChoice(COLORS);
     setTarget(t);
